@@ -27,7 +27,6 @@ export async function POST(request) {
     await connectDB();
     const user = await User.findOne({ mobile });
 
-    // CHANGED: Return 404 status instead of 200 when user doesn't exist
     if (!user) {
       return NextResponse.json(
         { message: 'User not found with this mobile number' },

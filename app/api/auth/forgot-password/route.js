@@ -17,7 +17,6 @@ export async function POST(request) {
       );
     }
 
-
     if (!/^\d{10}$/.test(mobile)) {
       return NextResponse.json(
         { message: 'Invalid mobile number format' },
@@ -26,18 +25,17 @@ export async function POST(request) {
     }
 
     await connectDB();
-
     const user = await User.findOne({ mobile });
 
+    // CHANGED: Return 404 status instead of 200 when user doesn't exist
     if (!user) {
       return NextResponse.json(
-        { message: 'If this mobile number is registered, you will receive an OTP via email' },
-        { status: 200 }
+        { message: 'User not found with this mobile number' },
+        { status: 404 }
       );
     }
 
     const otp = await createOTP(user.email, 'forgot_password');
-
     const emailResult = await sendOTPEmail(user.email, otp, 'password reset');
 
     if (!emailResult.success) {
@@ -47,15 +45,13 @@ export async function POST(request) {
       );
     }
 
-
     return NextResponse.json(
-      { 
+      {
         message: 'OTP sent successfully to your registered email',
         maskedEmail: user.email.replace(/(.{2})(.*)(@.*)/, '$1***$3')
       },
       { status: 200 }
     );
-
   } catch (error) {
     return NextResponse.json(
       { message: 'Internal server error' },

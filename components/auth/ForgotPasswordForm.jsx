@@ -190,50 +190,49 @@ export function ForgotPasswordForm() {
     }
   };
 
-const handleVerifyOtp = async (e) => {
-  e.preventDefault();
-  const otpValue = otp.join("");
+  const handleVerifyOtp = async (e) => {
+    e.preventDefault();
+    const otpValue = otp.join("");
 
-  if (otpValue.length !== 4) {
-    setFormError("Please enter complete OTP");
-    addToast("Please enter complete OTP", "error");
-    return;
-  }
-
-  setIsLoading(true);
-
-  try {
-    const res = await fetch("/api/auth/verify-otp", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ mobile, otp: otpValue }),
-    });
-
-    const data = await res.json();
-
-    if (!res.ok) {
-      setFormError(data.message || "Invalid OTP");
-      addToast(data.message || "Invalid OTP", "error");
-      setIsLoading(false);
+    if (otpValue.length !== 4) {
+      setFormError("Please enter complete OTP");
+      addToast("Please enter complete OTP", "error");
       return;
     }
 
-    sessionStorage.setItem("reset_identifier", data.identifier);
-    
-    addToast("OTP verified successfully!", "success");
+    setIsLoading(true);
 
-    setTimeout(() => {
-      clearSession();
-      router.push(`/reset-password?email=${encodeURIComponent(data.identifier)}`);
-      router.refresh();
-    }, 1000);
-  } catch (error) {
-    setFormError("Verification failed");
-    addToast("Verification failed. Please try again", "error");
-    setIsLoading(false);
-  }
-};
+    try {
+      const res = await fetch("/api/auth/verify-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ mobile, otp: otpValue }),
+      });
 
+      const data = await res.json();
+
+      if (!res.ok) {
+        setFormError(data.message || "Invalid OTP");
+        addToast(data.message || "Invalid OTP", "error");
+        setIsLoading(false);
+        return;
+      }
+
+      sessionStorage.setItem("reset_identifier", data.identifier);
+      
+      addToast("OTP verified successfully!", "success");
+
+      setTimeout(() => {
+        clearSession();
+        router.push(`/reset-password?email=${encodeURIComponent(data.identifier)}`);
+        router.refresh();
+      }, 1000);
+    } catch (error) {
+      setFormError("Verification failed");
+      addToast("Verification failed. Please try again", "error");
+      setIsLoading(false);
+    }
+  };
 
   const handleResendOtp = async () => {
     if (countdown > 0) return;
@@ -295,31 +294,32 @@ const handleVerifyOtp = async (e) => {
         {/* Mobile View */}
         <div className="lg:hidden h-screen bg-white flex flex-col overflow-hidden">
           <div className="flex-1 flex flex-col px-5 pt-8 pb-4">
-            <button 
-              onClick={handleBackClick} 
-              className="mb-2"
-              type="button"
-            >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-              </svg>
-            </button>
+            <div className="flex items-center mb-3">
+              <button 
+                onClick={handleBackClick} 
+                className="mr-2"
+                type="button"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+              <h1 className="text-[24px] font-bold flex-1 text-center mr-6">Verify</h1>
+            </div>
 
-            <h1 className="text-[24px] font-bold text-center mb-3">Verify</h1>
-
-            <div className="flex justify-center mb-3">
-              <div className="w-48 h-36">
+            <div className="flex justify-center" key="verify-illustration">
+              <div className="w-60 h-48">
                 <VerifyIllustration />
               </div>
             </div>
 
-            <h2 className="text-[18px] font-bold text-center mb-1.5">Enter OTP</h2>
+            <h2 className="text-[18px] font-bold text-center mt-14 mb-1.5">Enter OTP</h2>
             <p className="text-center text-[12px] text-gray-600 mb-1">An 4 digit OTP has been sent to</p>
             <p className="text-center text-[12px] font-semibold mb-4">{mobile.slice(0,3)}-{mobile.slice(3,6)}-{mobile.slice(6)}</p>
 
-            <form onSubmit={handleVerifyOtp} className="space-y-3">
+            <form onSubmit={handleVerifyOtp} className="w-full space-y-3">
               <div 
-                className="flex justify-center gap-2.5 mb-3 cursor-text relative"
+                className="w-full mt-3 cursor-text relative"
                 onClick={handleOtpContainerClick}
                 onTouchStart={handleOtpContainerClick}
               >
@@ -338,16 +338,18 @@ const handleVerifyOtp = async (e) => {
                   }}
                 />
                 
-                {otp.map((digit, index) => (
-                  <div
-                    key={index}
-                    className={`w-12 h-12 flex items-center justify-center text-lg font-semibold border-2 rounded-xl transition-colors ${
-                      digit ? 'border-black bg-gray-50' : 'border-gray-200'
-                    } ${currentOtpValue.length === index ? 'border-black ring-2 ring-black ring-opacity-20' : ''}`}
-                  >
-                    {digit || ''}
-                  </div>
-                ))}
+                <div className="grid grid-cols-4 gap-6 mb-1">
+                  {otp.map((digit, index) => (
+                    <div
+                      key={index}
+                      className={`aspect-square flex items-center justify-center text-xl font-semibold border-2 rounded-xl transition-colors ${
+                        digit ? 'border-black bg-gray-50' : 'border-gray-300'
+                      } ${currentOtpValue.length === index ? 'border-black ring-2 ring-black ring-opacity-20' : ''}`}
+                    >
+                      {digit || ''}
+                    </div>
+                  ))}
+                </div>
               </div>
 
               {formError && <ErrorMessage message={formError} />}
@@ -356,7 +358,7 @@ const handleVerifyOtp = async (e) => {
                 Verify
               </Button>
 
-              <div className="text-center pt-1">
+              <div className="text-center">
                 {countdown > 0 ? (
                   <p className="text-[12px] text-gray-600">
                     Resend OTP <span className="text-gray-400">({formatTime(countdown)})</span>
@@ -383,7 +385,7 @@ const handleVerifyOtp = async (e) => {
         {/* Desktop View */}
         <div className="hidden lg:flex h-screen bg-white items-center justify-center p-8">
           <div className="max-w-6xl w-full flex items-center gap-12">
-            <div className="flex-1">
+            <div className="flex-1" key="verify-illustration-desktop">
               <VerifyIllustration className="w-full h-auto max-h-[500px]" />
             </div>
 
@@ -405,7 +407,7 @@ const handleVerifyOtp = async (e) => {
 
               <form onSubmit={handleVerifyOtp} className="space-y-6">
                 <div 
-                  className="flex justify-center gap-4 mb-6 cursor-text relative"
+                  className="flex justify-center gap-5 mb-6 cursor-text relative"
                   onClick={handleOtpContainerClick}
                 >
                   <input
@@ -423,8 +425,8 @@ const handleVerifyOtp = async (e) => {
                   {otp.map((digit, index) => (
                     <div
                       key={index}
-                      className={`w-16 h-16 flex items-center justify-center text-2xl font-semibold border-2 rounded-xl transition-colors ${
-                        digit ? 'border-black bg-gray-50' : 'border-gray-200'
+                      className={`w-20 h-20 flex items-center justify-center text-3xl font-semibold border-2 rounded-lg transition-colors ${
+                        digit ? 'border-black bg-gray-50' : 'border-gray-300'
                       } ${currentOtpValue.length === index ? 'border-black ring-2 ring-black ring-opacity-20' : ''}`}
                     >
                       {digit || ''}
@@ -468,27 +470,28 @@ const handleVerifyOtp = async (e) => {
       {/* Mobile View */}
       <div className="lg:hidden h-screen bg-white flex flex-col overflow-hidden">
         <div className="flex-1 flex flex-col px-5 pt-8 pb-4">
-          <Link href="/login" className="inline-block mb-2">
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-          </Link>
+          <div className="flex items-center mb-3">
+            <Link href="/login" className="mr-2">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+            </Link>
+            <h1 className="text-[24px] font-bold flex-1 text-center mr-6">Forgot</h1>
+          </div>
 
-          <h1 className="text-[24px] font-bold text-center mb-3">Forgot</h1>
-
-          <div className="flex justify-center mb-3">
-            <div className="w-48 h-36">
+          <div className="flex justify-center mb-3" key="forgot-illustration">
+            <div className="w-56 h-48">
               <ForgotIllustration />
             </div>
           </div>
 
-          <h2 className="text-[18px] font-bold text-center mb-1.5">Forgot Password?</h2>
+          <h2 className="text-[18px] font-bold text-center pt-10 mb-1.5">Forgot Password?</h2>
           <p className="text-center text-[12px] text-gray-600 mb-4 leading-relaxed px-2">
             Don&apos;t worry! it happens. Please enter phone<br />
             number associated with your account
           </p>
 
-          <form onSubmit={handleSubmit} className="space-y-3">
+          <form onSubmit={handleSubmit} className="mt-5 space-y-3">
             {formError && <ErrorMessage message={formError} />}
 
             <MobileInput
@@ -515,7 +518,7 @@ const handleVerifyOtp = async (e) => {
       {/* Desktop View */}
       <div className="hidden lg:flex h-screen bg-white items-center justify-center p-8">
         <div className="max-w-6xl w-full flex items-center gap-12">
-          <div className="flex-1">
+          <div className="flex-1" key="forgot-illustration-desktop">
             <ForgotIllustration className="w-full h-auto max-h-[500px]" />
           </div>
 

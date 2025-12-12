@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/Input";
 import { MobileInput } from "@/components/ui/MobileInput";
 import { ErrorMessage } from "@/components/ui/ErrorMessage";
 import { useToast } from "@/components/ui/ToastProvider";
-import { validateEmail } from "@/lib/validators";
+import { validateEmail, validatePassword, validateMobile } from "@/lib/validators";
 import { canSubmit, registerSubmit, getRetryAfter } from "@/lib/rateLimit";
 
 export function SignupForm() {
@@ -40,7 +40,7 @@ export function SignupForm() {
     
     if (!formData.mobile) {
       newErrors.mobile = "Mobile number is required";
-    } else if (!/^\d{10}$/.test(formData.mobile)) {
+    } else if (!validateMobile(formData.mobile)) {
       newErrors.mobile = "Enter valid 10-digit mobile number";
     }
 
@@ -50,10 +50,9 @@ export function SignupForm() {
       newErrors.email = "Enter valid email address";
     }
 
-    if (!formData.password) {
-      newErrors.password = "Password is required";
-    } else if (formData.password.length < 8) {
-      newErrors.password = "Password must be 8+ characters";
+    const passwordValidation = validatePassword(formData.password);
+    if (!passwordValidation.isValid) {
+      newErrors.password = passwordValidation.message;
     }
 
     if (!formData.confirmPassword) {

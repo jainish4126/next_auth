@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { ErrorMessage } from "@/components/ui/ErrorMessage";
 import { useToast } from "@/components/ui/ToastProvider";
+import { validatePassword } from "@/lib/validators";
 
 export function ResetPasswordForm() {
   const router = useRouter();
@@ -54,16 +55,9 @@ export function ResetPasswordForm() {
   const validate = () => {
     const newErrors = {};
 
-    if (!formData.password) {
-      newErrors.password = "Password is required";
-    } else if (formData.password.length < 8) {
-      newErrors.password = "Password must be at least 8 characters";
-    } else if (!/[a-z]/.test(formData.password)) {
-      newErrors.password = "Must contain lowercase letter";
-    } else if (!/[A-Z]/.test(formData.password)) {
-      newErrors.password = "Must contain uppercase letter";
-    } else if (!/[0-9]/.test(formData.password)) {
-      newErrors.password = "Must contain a number";
+    const passwordValidation = validatePassword(formData.password);
+    if (!passwordValidation.isValid) {
+      newErrors.password = passwordValidation.message;
     }
 
     if (!formData.confirmPassword) {

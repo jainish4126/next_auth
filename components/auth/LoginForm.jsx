@@ -105,7 +105,6 @@ const handleSubmit = async (e) => {
 
   return (
     <>
-      {/* Mobile View */}
       <div className="lg:hidden h-screen bg-white flex flex-col">
 
         <div className="flex-1 overflow-y-auto">

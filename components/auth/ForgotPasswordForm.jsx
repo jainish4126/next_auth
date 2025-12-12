@@ -291,7 +291,6 @@ export function ForgotPasswordForm() {
 
     return (
       <>
-        {/* Mobile View */}
         <div className="lg:hidden h-screen bg-white flex flex-col overflow-hidden">
           <div className="flex-1 flex flex-col px-5 pt-8 pb-4">
             <div className="flex items-center mb-3">
@@ -467,7 +466,6 @@ export function ForgotPasswordForm() {
   // Forgot Password Screen
   return (
     <>
-      {/* Mobile View */}
       <div className="lg:hidden h-screen bg-white flex flex-col overflow-hidden">
         <div className="flex-1 flex flex-col px-5 pt-8 pb-4">
           <div className="flex items-center mb-3">

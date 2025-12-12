@@ -6,7 +6,7 @@ export function VerifyIllustration({ className = "" }) {
       className={`
         ${className}
         lg:mb-0
-        lg:-mt-32      /* ⬅ moved even more up (previous -mt-24) */
+        lg:-mt-32      
         lg:scale-90
         xl:scale-95
       `}

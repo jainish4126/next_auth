@@ -13,7 +13,6 @@ export default async function LandingPage() {
 
   return (
     <>
-      {/* Mobile View */}
       <div className="lg:hidden h-screen bg-white flex flex-col">
         <div className="flex-1 overflow-y-auto">
           <div className="px-5 pt-10 pb-4 min-h-full flex flex-col">
